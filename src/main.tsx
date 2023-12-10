@@ -6,11 +6,13 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import Root from "./routes/Root";
+import ErrorPage from "./routes/ErrorPage";
 
 const router = createHashRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />,
   },
 ]);
 
