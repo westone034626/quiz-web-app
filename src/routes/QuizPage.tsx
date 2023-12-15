@@ -3,6 +3,7 @@ import Button from '../components/Button';
 import useQuizs from '../hooks/useQuizs';
 import useQuizsSolvingRecord from '../hooks/useQuizsSolvingRecord';
 import useIndex from '../hooks/useIndex';
+import { useNavigate } from 'react-router-dom';
 
 const QuizPage = () => {
     const quizs = useQuizs();
@@ -16,8 +17,16 @@ const QuizPage = () => {
         submit,
         canSubmit,
         selectedOption,
-        setSelectedOption
+        setSelectedOption,
+        finish,
     } = useQuizsSolvingRecord(quizs, activeQuiz?.number || 0);
+
+    const navigate = useNavigate();
+    const handleFinish = () => {
+        const resultId = finish();
+
+        navigate(`/quiz/results/${resultId}`);
+    };
 
     if (!activeQuiz) {
         return 'Loading ...';
@@ -48,6 +57,15 @@ const QuizPage = () => {
                         onClick={increase}
                     >
                         다음 문제
+                    </Button>
+                )}
+
+                {isLast && (
+                    <Button
+                        disabled={!didSubmit()}
+                        onClick={handleFinish}
+                    >
+                        퀴즈 종료
                     </Button>
                 )}
             </div>

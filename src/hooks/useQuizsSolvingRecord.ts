@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { ClientQuiz } from "../types";
+import { ClientQuiz, QuizResult, QuizSolvingRecord } from "../types";
+import useTimer from "./useTimer";
+import useQuizResults from "./useQuizResults";
 
 type UseQuizsSolvingRecord = (quizs: ClientQuiz[], activeQuizNumber: number) => {
     canSubmit: boolean;
@@ -7,12 +9,8 @@ type UseQuizsSolvingRecord = (quizs: ClientQuiz[], activeQuizNumber: number) => 
     submit: () => void;
     selectedOption: number;
     setSelectedOption: (index: number) => void;
+    finish: () => number;
 };
-
-interface QuizSolvingRecord extends ClientQuiz {
-    selectedOptionIndex: number;
-    note: string;
-}
 
 const attachSolvingRecordInfo = (quiz: ClientQuiz) => {
     return {
@@ -25,6 +23,8 @@ const attachSolvingRecordInfo = (quiz: ClientQuiz) => {
 const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) => {
     const [quizsSolvingRecord, setQuizsSolvingRecord] = useState<QuizSolvingRecord[]>([]);
     const [selectedOption, setSelectedOption] = useState(-1);
+    const { startTime, stopTime, passedSeconds } = useTimer();
+    const { addQuizResult } = useQuizResults();
 
     useEffect(() => {
         setQuizsSolvingRecord(quizs.map(attachSolvingRecordInfo));
@@ -33,6 +33,10 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
     useEffect(() => {
         setSelectedOption(-1);
     }, [activeQuizNumber]);
+
+    useEffect(() => {
+        startTime();
+    }, [startTime]);
 
     const writeSolvingRecord = (quizNumber: number, selectedOptionIndex: number) => {
         setQuizsSolvingRecord(prev => {
@@ -68,7 +72,20 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
         return solvingRecord ? solvingRecord.selectedOptionIndex > -1 : false;
     };
 
-    return { canSubmit, submit, didSubmit, selectedOption, setSelectedOption };
+    const finish = () => {
+        const newQuizResult: QuizResult = {
+            id: Date.now(),
+            passedTimes: passedSeconds,
+            quizsSolvingRecord
+        };
+
+        addQuizResult(newQuizResult);
+        stopTime();
+
+        return newQuizResult.id;
+    };
+
+    return { canSubmit, submit, didSubmit, selectedOption, setSelectedOption, finish };
 };
 
 export default useQuizsSolvingRecord;

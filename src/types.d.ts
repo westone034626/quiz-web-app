@@ -22,9 +22,22 @@ interface ClientQuiz {
     correctOptionIndex: number;
 }
 
+interface QuizSolvingRecord extends ClientQuiz {
+    selectedOptionIndex: number;
+    note: string;
+}
+
+interface QuizResult {
+    id: number;
+    passedTimes: number;
+    quizsSolvingRecord: QuizSolvingRecord[];
+}
+
 export type {
     Styles,
     Spacing,
     ClientQuiz,
     ServerQuiz,
+    QuizSolvingRecord,
+    QuizResult,
 };
