@@ -32,7 +32,7 @@ const router = createHashRouter([
     ]
   },
 ], {
-  basename: "/quiz-web-app",
+  basename: "/quiz-web-app/",
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
