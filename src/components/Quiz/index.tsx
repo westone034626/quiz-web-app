@@ -9,9 +9,10 @@ interface QuizProps {
     quiz: ClientQuiz;
     onSelectOption?: (index: number) => void;
     selectedOptionIndex?: number;
+    disabled?: boolean;
 }
 
-function Quiz({ quiz, onSelectOption, selectedOptionIndex }: QuizProps) {
+function Quiz({ disabled = false, quiz, onSelectOption, selectedOptionIndex }: QuizProps) {
     const styles: Styles = {
         container: {
             padding: 16,
@@ -42,7 +43,7 @@ function Quiz({ quiz, onSelectOption, selectedOptionIndex }: QuizProps) {
                 index={index}
                 onClick={onSelectOption ? handleSelectOption : undefined}
                 selected={selected}
-                disabled={false}
+                disabled={disabled}
             />
         );
     };
@@ -67,6 +68,16 @@ function Quiz({ quiz, onSelectOption, selectedOptionIndex }: QuizProps) {
                 spacing={2}
                 style={styles.list}
             />
+
+            {disabled && (
+                <>
+                    <Spacer spacing={5} />
+
+                    <div style={styles.rightAnswerContainer}>
+                        <span style={styles.rightAnswer}>{`정답: ${quiz.correctOptionIndex + 1}`}</span>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
