@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Quiz from '../components/Quiz';
 import useQuizs from '../hooks/useQuizs';
 
@@ -6,11 +7,21 @@ const QuizPage = () => {
 
     const activeQuiz = quizs[0];
 
+    const [selectedOption, setSelectedOption] = useState<number>(-1);
+
+    if (!activeQuiz) {
+        return 'Loading ...';
+    }
+
     return (
         <>
             <div>QuizPage</div>
 
-            {activeQuiz && <Quiz quiz={activeQuiz} />}
+            <Quiz
+                quiz={activeQuiz}
+                selectedOptionIndex={selectedOption}
+                onSelectOption={setSelectedOption}
+            />
         </>
     );
 };

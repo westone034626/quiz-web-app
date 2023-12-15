@@ -4,7 +4,7 @@ import { Styles } from '../types';
 interface ButtonProps {
     children: React.ReactNode;
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    disabled: boolean;
+    disabled?: boolean;
     style?: CSSProperties;
 }
 

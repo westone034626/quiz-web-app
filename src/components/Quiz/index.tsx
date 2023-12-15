@@ -32,7 +32,7 @@ function Quiz({ quiz, onSelectOption, selectedOptionIndex }: QuizProps) {
 
         const handleSelectOption = () => {
             if (typeof onSelectOption === 'function') {
-                onSelectOption(index);
+                onSelectOption(selected ? -1 : index);
             }
         };
 
