@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { ClientQuiz } from "../types";
 
-type UseQuizsSolvingRecord = (quizs: ClientQuiz[]) => {
-    confirmSolvingRecord: (quizNumber: number) => { selectedOptionIndex: number, correctOptionIndex: number; } | null;
-    writeSolvingRecord: (quizNumber: number, selectedOptionIndex: number) => void;
+type UseQuizsSolvingRecord = (quizs: ClientQuiz[], activeQuizNumber: number) => {
+    canSubmit: boolean;
+    didSubmit: () => boolean;
+    submit: () => void;
+    selectedOption: number;
+    setSelectedOption: (index: number) => void;
 };
 
 interface QuizSolvingRecord extends ClientQuiz {
@@ -19,12 +22,17 @@ const attachSolvingRecordInfo = (quiz: ClientQuiz) => {
     };
 };
 
-const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs) => {
+const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) => {
     const [quizsSolvingRecord, setQuizsSolvingRecord] = useState<QuizSolvingRecord[]>([]);
+    const [selectedOption, setSelectedOption] = useState(-1);
 
     useEffect(() => {
         setQuizsSolvingRecord(quizs.map(attachSolvingRecordInfo));
     }, [quizs]);
+
+    useEffect(() => {
+        setSelectedOption(-1);
+    }, [activeQuizNumber]);
 
     const writeSolvingRecord = (quizNumber: number, selectedOptionIndex: number) => {
         setQuizsSolvingRecord(prev => {
@@ -48,7 +56,19 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs) => {
         };
     };
 
-    return { confirmSolvingRecord, writeSolvingRecord };
+    const canSubmit = selectedOption > -1;
+
+    const submit = () => {
+        writeSolvingRecord(activeQuizNumber, selectedOption);
+    };
+
+    const didSubmit = () => {
+        const solvingRecord = confirmSolvingRecord(activeQuizNumber);
+
+        return solvingRecord ? solvingRecord.selectedOptionIndex > -1 : false;
+    };
+
+    return { canSubmit, submit, didSubmit, selectedOption, setSelectedOption };
 };
 
 export default useQuizsSolvingRecord;

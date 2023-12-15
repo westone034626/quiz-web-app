@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Quiz from '../components/Quiz';
 import Button from '../components/Button';
 import useQuizs from '../hooks/useQuizs';
@@ -7,30 +6,18 @@ import useIndex from '../hooks/useIndex';
 
 const QuizPage = () => {
     const quizs = useQuizs();
-    const { writeSolvingRecord, confirmSolvingRecord } = useQuizsSolvingRecord(quizs);
 
     const { activeIndex, increase, isLast } = useIndex(quizs.length);
 
     const activeQuiz = quizs[activeIndex];
 
-    const [selectedOption, setSelectedOption] = useState<number>(-1);
-
-    const canSubmit = selectedOption > -1;
-    const submit = () => {
-        writeSolvingRecord(activeQuiz.number, selectedOption);
-    };
-
-    const didSubmit = () => {
-        const solvingRecord = confirmSolvingRecord(activeQuiz.number);
-
-        return solvingRecord ? solvingRecord.selectedOptionIndex > -1 : false;
-    };
-
-    const goToNextQuiz = () => {
-        increase();
-
-        setSelectedOption(-1);
-    };
+    const {
+        didSubmit,
+        submit,
+        canSubmit,
+        selectedOption,
+        setSelectedOption
+    } = useQuizsSolvingRecord(quizs, activeQuiz?.number || 0);
 
     if (!activeQuiz) {
         return 'Loading ...';
@@ -58,7 +45,7 @@ const QuizPage = () => {
                 {!isLast && (
                     <Button
                         disabled={!didSubmit()}
-                        onClick={goToNextQuiz}
+                        onClick={increase}
                     >
                         다음 문제
                     </Button>
