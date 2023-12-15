@@ -19,6 +19,8 @@ const QuizPage = () => {
         selectedOption,
         setSelectedOption,
         finish,
+        writeNote,
+        getNote,
     } = useQuizsSolvingRecord(quizs, activeQuiz?.number || 0);
 
     const navigate = useNavigate();
@@ -34,7 +36,7 @@ const QuizPage = () => {
 
     return (
         <>
-            <div>QuizPage</div>
+            <h1>QuizPage</h1>
 
             <Quiz
                 disabled={didSubmit()}
@@ -42,6 +44,14 @@ const QuizPage = () => {
                 selectedOptionIndex={selectedOption}
                 onSelectOption={setSelectedOption}
             />
+
+            {didSubmit() && (
+                <textarea
+                    placeholder='오답노트'
+                    value={getNote()}
+                    onChange={event => writeNote(event.target.value)}
+                />
+            )}
 
             <div className='flex gap-1 justify-center'>
                 <Button

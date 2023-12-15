@@ -10,6 +10,8 @@ type UseQuizsSolvingRecord = (quizs: ClientQuiz[], activeQuizNumber: number) => 
     selectedOption: number;
     setSelectedOption: (index: number) => void;
     finish: () => number;
+    writeNote: (note: string) => void;
+    getNote: () => string;
 };
 
 const attachSolvingRecordInfo = (quiz: ClientQuiz) => {
@@ -38,10 +40,14 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
         startTime();
     }, [startTime]);
 
-    const writeSolvingRecord = (quizNumber: number, selectedOptionIndex: number) => {
+    const writeSolvingRecord = (quizNumber: number, options: { selectedOptionIndex?: number, note?: string; }) => {
         setQuizsSolvingRecord(prev => {
             return prev.map(quizSolvingRecord => quizSolvingRecord.number === quizNumber
-                ? { ...quizSolvingRecord, selectedOptionIndex }
+                ? ({
+                    ...quizSolvingRecord,
+                    ...(options.selectedOptionIndex ? { selectedOptionIndex: options.selectedOptionIndex } : {}),
+                    ...(options.note ? { note: options.note } : {}),
+                })
                 : quizSolvingRecord
             );
         });
@@ -57,19 +63,34 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
         return {
             selectedOptionIndex: targetQuizSolvingRecord.selectedOptionIndex,
             correctOptionIndex: targetQuizSolvingRecord.correctOptionIndex,
+            note: targetQuizSolvingRecord.note,
         };
     };
 
     const canSubmit = selectedOption > -1;
 
     const submit = () => {
-        writeSolvingRecord(activeQuizNumber, selectedOption);
+        const options = { selectedOptionIndex: selectedOption };
+
+        writeSolvingRecord(activeQuizNumber, options);
+    };
+
+    const writeNote = (note: string) => {
+        const options = { note };
+
+        writeSolvingRecord(activeQuizNumber, options);
     };
 
     const didSubmit = () => {
         const solvingRecord = confirmSolvingRecord(activeQuizNumber);
 
         return solvingRecord ? solvingRecord.selectedOptionIndex > -1 : false;
+    };
+
+    const getNote = () => {
+        const solvingRecord = confirmSolvingRecord(activeQuizNumber);
+
+        return solvingRecord ? solvingRecord.note : '';
     };
 
     const finish = () => {
@@ -85,7 +106,7 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
         return newQuizResult.id;
     };
 
-    return { canSubmit, submit, didSubmit, selectedOption, setSelectedOption, finish };
+    return { canSubmit, submit, didSubmit, selectedOption, setSelectedOption, finish, writeNote, getNote };
 };
 
 export default useQuizsSolvingRecord;

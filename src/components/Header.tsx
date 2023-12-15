@@ -1,6 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
 const Header = () => {
+    const navigate = useNavigate();
+    const goToHome = () => navigate('/');
+
     return (
-        <div>Header</div>
+        <div
+            onClick={goToHome}
+            className='cursor-pointer'
+        >
+            Header
+        </div>
     );
 };
 
