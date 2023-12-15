@@ -3,6 +3,8 @@ import { ClientQuiz, QuizResult, QuizSolvingRecord } from "../types";
 import useTimer from "./useTimer";
 import useQuizResults from "./useQuizResults";
 
+const isNumber = (data: unknown) => typeof data === 'number';
+
 type UseQuizsSolvingRecord = (quizs: ClientQuiz[], activeQuizNumber: number) => {
     canSubmit: boolean;
     didSubmit: () => boolean;
@@ -45,7 +47,7 @@ const useQuizsSolvingRecord: UseQuizsSolvingRecord = (quizs, activeQuizNumber) =
             return prev.map(quizSolvingRecord => quizSolvingRecord.number === quizNumber
                 ? ({
                     ...quizSolvingRecord,
-                    ...(options.selectedOptionIndex ? { selectedOptionIndex: options.selectedOptionIndex } : {}),
+                    ...(isNumber(options.selectedOptionIndex) ? { selectedOptionIndex: options.selectedOptionIndex } : {}),
                     ...(options.note ? { note: options.note } : {}),
                 })
                 : quizSolvingRecord
