@@ -74,11 +74,15 @@ const ResultPage = () => {
                     spacing={1}
                     data={quizResult.quizsSolvingRecord}
                     renderItem={(record) => (
-                        <Quiz
-                            quiz={record}
-                            disabled={true}
-                            selectedOptionIndex={record.selectedOptionIndex}
-                        />
+                        <>
+                            <Quiz
+                                quiz={record}
+                                disabled={true}
+                                selectedOptionIndex={record.selectedOptionIndex}
+                            />
+
+                            {Boolean(record.note) && <span className='pt-1'>{`오답노트: ${record.note}`}</span>}
+                        </>
                     )}
                 />
             </div>
